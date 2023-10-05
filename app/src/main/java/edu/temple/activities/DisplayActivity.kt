@@ -5,14 +5,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 
+const val RESULT_KEY = "response"
 class DisplayActivity : AppCompatActivity() {
 
     // TODO Step 1: Launch TextSizeActivity when button clicked to allow selection of text size value
+    private lateinit var lyricsDisplayTextView: TextView
+    val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) it.data?.apply { lyricsDisplayTextView.text = getStringExtra(RESULT_KEY) }
+    }
 
     // TODO Step 3: Use returned value for lyricsDisplayTextView text size
-
-    private lateinit var lyricsDisplayTextView: TextView
     private lateinit var textSizeSelectorButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,10 +27,8 @@ class DisplayActivity : AppCompatActivity() {
         textSizeSelectorButton = findViewById(R.id.textSizeSelectorButton)
 
         textSizeSelectorButton.setOnClickListener {
-            startActivity(
-                Intent(
-                    this@DisplayActivity, TextSizeActivity::class.java
-                )
+            launcher.launch(
+                Intent(this@DisplayActivity, TextSizeActivity::class.java)
             )
         }
     }
